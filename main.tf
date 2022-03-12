@@ -18,7 +18,7 @@ module "vpc" {
 
 resource "aws_instance" "jenkins" {
   ami                         = module.vpc.ami_id
-  subnet_id                   = module.vpc.subnet_id
+  subnet_id                   = module.vpc.public_subnet1_id
   instance_type               = "t2.micro"
   key_name                    = "webkey"
   associate_public_ip_address = true
@@ -34,17 +34,15 @@ resource "aws_instance" "jenkins" {
       "sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo",
       "sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key",
       "sudo yum upgrade",
-      "sudo yum install -y yum-utils",
+      "sudo yum install -y yum-utils jenkins git terraform",
       "sudo yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo",
       "sudo amazon-linux-extras install java-openjdk11 epel python3.8 docker ansible2 -y",
-      "sudo yum install jenkins git -y",
-      "sudo yum -y install terraform",
       "sudo systemctl enable jenkins",
       "sudo systemctl enable docker",
       "sudo systemctl start jenkins",
       "sudo systemctl start docker",
       "sudo systemctl status jenkins",
-      "sudo usermod -a -G docker ec2-user"
+      "sudo usermod -a -G docker ec2-user",
     ]
     connection {
       type        = "ssh"
@@ -53,14 +51,27 @@ resource "aws_instance" "jenkins" {
       host        = self.public_ip
     }
   }
+
+  # provisioner "file" {
+
+  #   source = "~/.ssh/webkey.pem"
+  #   destination = "~/.ssh/webkey.pem"
+
+  #   connection {
+  #     type        = "ssh"
+  #     user        = "ec2-user"
+  #     private_key = file("~/.ssh/webkey.pem")
+  #     host        = self.public_ip
+  #   }
+  # }
   tags = {
-    Name = "my-auto-jenkins-instance"
+    Name = "jenkins"
   }
 }
 
 resource "aws_instance" "prometheus" {
   ami                         = module.vpc.ami_id
-  subnet_id                   = module.vpc.subnet_id
+  subnet_id                   = module.vpc.public_subnet1_id
   instance_type               = "t2.micro"
   key_name                    = "webkey"
   associate_public_ip_address = true
@@ -90,6 +101,6 @@ resource "aws_instance" "prometheus" {
     }
   }
   tags = {
-    Name = "my-auto-prometheus-instance"
+    Name = "prometheus"
   }
 }

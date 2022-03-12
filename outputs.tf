@@ -1,3 +1,7 @@
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
 output "jenkins_public_dns" {
   description = "Public DNS name of jenkins server"
   value       = aws_instance.jenkins.public_dns

@@ -23,11 +23,20 @@ variable "dnsSupport" {
 variable "dnsHostNames" {
   default = true
 }
-variable "vpcCIDRblock" {
+variable "vpcCIDR" {
   default = "10.0.0.0/16"
 }
-variable "subnetCIDRblock" {
+variable "publicSubnet1CIDR" {
   default = "10.0.1.0/24"
+}
+variable "publicSubnet2CIDR" {
+  default = "10.0.2.0/24"
+}
+variable "privateSubnet1CIDR" {
+  default = "10.0.3.0/24"
+}
+variable "privateSubnet2CIDR" {
+  default = "10.0.4.0/24"
 }
 variable "destinationCIDRblock" {
   default = "0.0.0.0/0"
